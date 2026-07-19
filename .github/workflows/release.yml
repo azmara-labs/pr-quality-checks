@@ -1,0 +1,59 @@
+name: Release
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency: ${{ github.workflow }}-${{ github.ref }}
+
+jobs:
+  release:
+    name: Release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      id-token: write # npm OIDC trusted publishing
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          registry-url: "https://registry.npmjs.org"
+
+      - name: Update npm for OIDC trusted publishing support
+        run: npm install -g npm@latest # trusted publishing needs npm >=11.5.1
+
+      - name: Check whether this version is already published
+        id: version-check
+        run: |
+          LOCAL_VERSION=$(node -p "require('./package.json').version")
+          if npm view "@azmr/pr-quality-checks@$LOCAL_VERSION" version 2>/dev/null; then
+            echo "already-published=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "already-published=false" >> "$GITHUB_OUTPUT"
+          fi
+          echo "version=$LOCAL_VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: Publish
+        if: steps.version-check.outputs.already-published == 'false'
+        env:
+          NPM_CONFIG_PROVENANCE: "true"
+        run: npm publish
+
+      - name: Tag release
+        if: steps.version-check.outputs.already-published == 'false'
+        run: |
+          git tag "v${{ steps.version-check.outputs.version }}"
+          git push origin "v${{ steps.version-check.outputs.version }}"
+
+      - name: Create GitHub Release
+        if: steps.version-check.outputs.already-published == 'false'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: "v${{ steps.version-check.outputs.version }}"
+          generate_release_notes: true

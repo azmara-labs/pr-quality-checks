@@ -1,10 +1,23 @@
 {
-  "name": "@azmara-labs/pr-quality-checks",
+  "name": "@azmr/pr-quality-checks",
   "version": "0.1.0",
-  "private": true,
   "description": "Shared PR quality/security check scripts for azmara-labs repos",
   "type": "module",
   "license": "MIT",
+  "author": "Alshafaraz Gazi <alshafaraz.gazi@gmail.com>",
+  "homepage": "https://github.com/azmara-labs/pr-quality-checks",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/azmara-labs/pr-quality-checks.git"
+  },
+  "keywords": ["ci", "lint", "package-hygiene", "npm-publish", "azmara"],
+  "publishConfig": {
+    "access": "public"
+  },
+  "files": ["scripts", "README.md", "LICENSE"],
+  "bin": {
+    "pr-quality-checks": "scripts/run-all.mjs"
+  },
   "scripts": {
     "check:encoding": "node scripts/check-encoding.mjs",
     "check:package-metadata": "node scripts/check-package-metadata.mjs",
