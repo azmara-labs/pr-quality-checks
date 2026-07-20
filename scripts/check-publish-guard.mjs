@@ -14,6 +14,7 @@
  * means it's mid-scaffold and not ready to be picked up by CI yet, which
  * is fine, just flagged so it's a deliberate choice, not an oversight.
  */
+// @ts-check
 import path from "node:path";
 import { findWorkspacePackages, getChangesetIgnoreList } from "./lib/workspace.mjs";
 

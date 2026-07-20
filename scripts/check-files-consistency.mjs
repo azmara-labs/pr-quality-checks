@@ -11,6 +11,7 @@
  * our packages use them). "dist" is allowed to be absent since it's a
  * build output, not something expected to exist at check time.
  */
+// @ts-check
 import fs from "node:fs";
 import path from "node:path";
 import { findWorkspacePackages } from "./lib/workspace.mjs";

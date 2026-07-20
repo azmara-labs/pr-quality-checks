@@ -24,6 +24,11 @@
     "check:files-consistency": "node scripts/check-files-consistency.mjs",
     "check:publish-guard": "node scripts/check-publish-guard.mjs",
     "check:config-schema": "node scripts/check-config-schema.mjs",
-    "check:all": "node scripts/run-all.mjs"
+    "check:all": "node scripts/run-all.mjs",
+    "check-types": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "typescript": "^5.9.0"
   }
 }
