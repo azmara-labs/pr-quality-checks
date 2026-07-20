@@ -11,6 +11,7 @@
  * re-interpreted as Windows-1252 produces a 2-3 byte garbled sequence
  * starting with "Ã" or "â€".
  */
+// @ts-check
 import fs from "node:fs";
 import path from "node:path";
 
@@ -23,6 +24,11 @@ const MOJIBAKE_PATTERNS = [/â€”/, /â€™/, /â€œ/, /â€\x9d/, /â�
 const SCAN_EXTENSIONS = [".json", ".md", ".ts", ".tsx", ".js", ".jsx"];
 const SKIP_DIRS = new Set(["node_modules", ".git", "dist", ".next", ".turbo", "build", "coverage"]);
 
+/**
+ * @param {string} dir
+ * @param {string[]} [files]
+ * @returns {string[]}
+ */
 function walk(dir, files = []) {
   for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
     if (entry.name.startsWith(".") && entry.name !== ".changeset") continue;
@@ -37,6 +43,7 @@ function walk(dir, files = []) {
   return files;
 }
 
+/** @type {string[]} */
 const violations = [];
 for (const file of walk(root)) {
   const contents = fs.readFileSync(file, "utf-8");

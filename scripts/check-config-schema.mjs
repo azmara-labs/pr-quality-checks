@@ -16,6 +16,7 @@
  * embeds a literal version number in its schema URL. The REGISTRY array
  * below is where a future tool with the same pattern would be added.
  */
+// @ts-check
 import fs from "node:fs";
 import path from "node:path";
 
@@ -30,6 +31,13 @@ const REGISTRY = [
   },
 ];
 
+/**
+ * @param {string} dir
+ * @param {string[]} fileNames
+ * @param {string[]} [results]
+ * @param {number} [depth]
+ * @returns {string[]}
+ */
 function findConfigFiles(dir, fileNames, results = [], depth = 0) {
   if (depth > 3) return results; // don't wander into node_modules-depth territory
   let entries;
@@ -50,6 +58,11 @@ function findConfigFiles(dir, fileNames, results = [], depth = 0) {
   return results;
 }
 
+/**
+ * @param {string} root
+ * @param {string} packageName
+ * @returns {string | null}
+ */
 function getInstalledVersion(root, packageName) {
   // Prefer the actually-resolved version in node_modules over the semver
   // range in package.json - that's what's really running.

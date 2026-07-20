@@ -1,11 +1,26 @@
+// @ts-check
 import fs from "node:fs";
 import path from "node:path";
+
+/**
+ * @typedef {{
+ *   dir: string,
+ *   pkgJsonPath: string,
+ *   raw: string,
+ *   pkg: Record<string, any> | null,
+ *   parseError: boolean,
+ * }} WorkspacePackage
+ */
 
 /**
  * Finds package.json files under the given glob-ish directory patterns
  * (e.g. ["packages/*", "apps/*"]) relative to cwd. No real glob engine -
  * just one-level wildcard expansion, since that's all every azmara-labs
  * workspace layout has needed so far.
+ *
+ * @param {string} root
+ * @param {string[]} [patterns]
+ * @returns {WorkspacePackage[]}
  */
 export function findWorkspacePackages(root, patterns = ["packages/*", "apps/*"]) {
   const results = [];
@@ -36,7 +51,11 @@ export function findWorkspacePackages(root, patterns = ["packages/*", "apps/*"])
   return results;
 }
 
-/** Reads .changeset/config.json's ignore list, or [] if changesets isn't used. */
+/**
+ * Reads .changeset/config.json's ignore list, or [] if changesets isn't used.
+ * @param {string} root
+ * @returns {string[]}
+ */
 export function getChangesetIgnoreList(root) {
   const configPath = path.join(root, ".changeset", "config.json");
   if (!fs.existsSync(configPath)) return [];
@@ -48,11 +67,16 @@ export function getChangesetIgnoreList(root) {
   }
 }
 
+/**
+ * @param {string[]} messages
+ * @returns {never}
+ */
 export function fail(messages) {
   for (const m of messages) console.error(`✖ ${m}`);
   process.exit(1);
 }
 
+/** @param {string} label */
 export function ok(label) {
   console.log(`✓ ${label}`);
 }

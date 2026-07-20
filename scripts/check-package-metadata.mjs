@@ -9,6 +9,7 @@
  * metadata doesn't matter the same way) and anything without a "name"
  * field at all (not a real package).
  */
+// @ts-check
 import path from "node:path";
 import { findWorkspacePackages } from "./lib/workspace.mjs";
 

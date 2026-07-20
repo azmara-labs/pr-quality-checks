@@ -17,6 +17,12 @@ incident that motivated it.
 
 Run them all: `node scripts/run-all.mjs <path-to-repo>` (defaults to cwd).
 
+## Type checking
+
+Scripts are plain `.mjs` (no build step - what ships is what runs), but
+type-checked via `// @ts-check` + JSDoc annotations and a `checkJs`
+`tsconfig.json`. Run `npm run check-types` (`tsc --noEmit`) to check.
+
 ## Using from another repo
 
 ```bash
