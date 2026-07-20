@@ -1,6 +1,6 @@
 {
   "name": "@azmr/pr-quality-checks",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Shared PR quality/security check scripts for azmara-labs repos",
   "type": "module",
   "license": "MIT",
@@ -23,6 +23,7 @@
     "check:package-metadata": "node scripts/check-package-metadata.mjs",
     "check:files-consistency": "node scripts/check-files-consistency.mjs",
     "check:publish-guard": "node scripts/check-publish-guard.mjs",
+    "check:config-schema": "node scripts/check-config-schema.mjs",
     "check:all": "node scripts/run-all.mjs"
   }
 }

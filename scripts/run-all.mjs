@@ -11,6 +11,7 @@ const CHECKS = [
   "check-package-metadata.mjs",
   "check-files-consistency.mjs",
   "check-publish-guard.mjs",
+  "check-config-schema.mjs",
 ];
 
 let failed = false;

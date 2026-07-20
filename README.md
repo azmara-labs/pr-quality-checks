@@ -1,8 +1,7 @@
 # pr-quality-checks
 
-Shared PR quality/security checks for `azmara-labs` repos, as reusable
-GitHub Actions workflows (`workflow_call`) plus the standalone Node
-scripts behind them. Built out of real bugs found by hand in
+Shared PR quality/security checks for `azmara-labs` repos, published as
+a normal npm package. Built out of real bugs found by hand in
 `azmara-platform` - see each script's file header for the specific
 incident that motivated it.
 
@@ -14,36 +13,39 @@ incident that motivated it.
 | `check-package-metadata.mjs` | Publishable packages missing required `package.json` fields |
 | `check-files-consistency.mjs` | `package.json`'s `files` array listing paths that don't exist on disk |
 | `check-publish-guard.mjs` | Internal packages missing `private: true` and/or a changesets ignore entry |
+| `check-config-schema.mjs` | A tool config's declared `$schema` version drifting from the actually-installed tool version (currently covers Biome) |
 
 Run them all: `node scripts/run-all.mjs <path-to-repo>` (defaults to cwd).
 
 ## Using from another repo
 
-```yaml
-jobs:
-  standards:
-    uses: azmara-labs/pr-quality-checks/.github/workflows/reusable-package-standards.yml@main
-    secrets:
-      app-private-key: ${{ secrets.CLA_BOT_PRIVATE_KEY }}
+```bash
+pnpm add -D @azmr/pr-quality-checks
 ```
 
-This repo is private, so the reusable workflow checks itself out using a
-GitHub App token (same App already installed org-wide for the CLA bot) -
-the default `GITHUB_TOKEN` in the calling repo can't read another
-private repo on its own.
+```yaml
+# in your CI workflow, after `pnpm install`
+- name: Package standards
+  run: node node_modules/@azmr/pr-quality-checks/scripts/run-all.mjs .
+```
+
+A cross-repo reusable GitHub Actions workflow (`workflow_call`) was the
+original plan, but hit an unresolved GitHub Actions permission issue
+calling a *private* repo's reusable workflow from another repo in the
+same org - empty `referenced_workflows`, immediate failure, persisted
+across retries even with `Settings > Actions > Access` correctly set to
+`organization`. Publishing as a real npm package sidesteps the problem
+entirely: it's just a normal `pnpm install`, no cross-repo Actions
+permissions involved.
 
 ## Status
 
-Scaffolded with the first 4 checks (package/publish hygiene). Not yet
-wired into any repo's CI - `azmara-platform` should be the first
-consumer, to prove the reusable-workflow pattern works before anything
-else depends on it.
+5 checks shipped, live on npm as `@azmr/pr-quality-checks`, consumed by
+`azmara-platform`'s CI (`Test & Lint` job).
 
-Planned but not yet built (see the full standards list from the
-azmara-platform session that spawned this repo):
-- Config-schema validation (catch a linter config silently no-oping
-  forever against a mismatched tool version)
+Planned but not yet built:
 - Nested-config inheritance check (a nested `biome.json` not inheriting
-  the root's file excludes)
+  the root's file excludes - the actual bug that caused ~12,600
+  false-positive lint findings in one session)
 - Optional native-dependency type fallback check
 - PR template field completeness
